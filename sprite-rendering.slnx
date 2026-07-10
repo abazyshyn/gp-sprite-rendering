@@ -1,0 +1,7 @@
+<Solution>
+  <Configurations>
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Project Path="sprite-rendering/sprite-rendering.vcxproj" Id="fc750222-e94f-41be-9071-6002890dc9cd" />
+</Solution>
