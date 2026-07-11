@@ -1,1 +1,6 @@
-# gp-sprite-rendering
+# Sprite rendering
+
+### Tools:
+C++, DirectX11, HLSL.
+
+### Result:
