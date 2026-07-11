@@ -14,7 +14,15 @@ namespace GP
     class CApplication
     {
     public:
+        bool Init(int32_t windowWidth, int32_t windowHeight, HWND hWnd);
+        void Shutdown();
+        bool Frame();
+
     private:
+        bool Render();
+
+    private:
+        // CDirect3D m_Direct3D;
     };
 
 } // namespace GP
