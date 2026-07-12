@@ -27,11 +27,13 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="src\system\application\direct3d\direct3d.cpp" />
     <ClCompile Include="src\system\system.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\pch.h" />
     <ClInclude Include="src\system\application\application.h" />
+    <ClInclude Include="src\system\application\direct3d\direct3d.h" />
     <ClInclude Include="src\system\system.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
