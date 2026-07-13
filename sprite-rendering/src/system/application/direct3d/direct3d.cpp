@@ -173,7 +173,79 @@ namespace GP
         depthStencilDescription.BackFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
         depthStencilDescription.BackFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
 
-        if (FAILED(m_device->CreateDepthStencilState(&depthStencilDescription, &m_depthDisabledStencilState)))
+        if (FAILED(m_device->CreateDepthStencilState(&depthStencilDescription, &m_depthStencilState)))
+        {
+            MessageBox(hWnd, L"Could not create ID3D11DepthStencilState m_depthDisabledStencilState", L"Error", MB_OK);
+            return false;
+        }
+
+        m_deviceContext->OMSetDepthStencilState(m_depthStencilState, 1);
+
+        D3D11_DEPTH_STENCIL_VIEW_DESC depthStencilViewDescription{};
+        depthStencilViewDescription.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+        depthStencilViewDescription.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
+        depthStencilViewDescription.Texture2D.MipSlice = 0; // Index of the first mipmap level to use
+
+        if (FAILED(m_device->CreateDepthStencilView(m_depthStencilBuffer, &depthStencilViewDescription, &m_depthStencilView)))
+        {
+            MessageBox(hWnd, L"Could not create ID3D11DepthStencilView m_depthStencilView", L"Error", MB_OK);
+            return false;
+        }
+
+        m_deviceContext->OMSetRenderTargets(1, &m_renderTargetView, m_depthStencilView);
+
+        D3D11_RASTERIZER_DESC rasterizerDescription{};
+        rasterizerDescription.AntialiasedLineEnable = false;
+        rasterizerDescription.CullMode = D3D11_CULL_BACK;
+        rasterizerDescription.DepthBias = 0;
+        rasterizerDescription.DepthBiasClamp = 0.0f;
+        rasterizerDescription.DepthClipEnable = true;
+        rasterizerDescription.FillMode = D3D11_FILL_SOLID;
+        rasterizerDescription.FrontCounterClockwise = false;
+        rasterizerDescription.MultisampleEnable = false;
+        rasterizerDescription.ScissorEnable = false;
+        rasterizerDescription.SlopeScaledDepthBias = 0.0f;
+
+        if (FAILED(m_device->CreateRasterizerState(&rasterizerDescription, &m_rasterizerState)))
+        {
+            MessageBox(hWnd, L"Could not create ID3D11RasterizerState m_rasterizerState", L"Error", MB_OK);
+            return false;
+        }
+
+        m_deviceContext->RSSetState(m_rasterizerState);
+
+        m_viewport.Width = static_cast<float>(windowWidth);
+        m_viewport.Height = static_cast<float>(windowHeight);
+        m_viewport.MaxDepth = 1.0f;
+        m_viewport.MinDepth = 0.0f;
+        m_viewport.TopLeftX = 0.0f;
+        m_viewport.TopLeftY = 0.0f;
+
+        m_deviceContext->RSSetViewports(1, &m_viewport);
+
+        const float fieldOfView = XM_PIDIV4;
+        const float windowAspectRation = static_cast<float>(windowWidth) / static_cast<float>(windowHeight);
+        m_projectionMatrix = XMMatrixPerspectiveFovLH(fieldOfView, windowAspectRation, nearPlane, farPlane);
+        m_worldMatrix = XMMatrixIdentity();
+        m_orthoMatrix = XMMatrixOrthographicLH(static_cast<float>(windowWidth), static_cast<float>(windowHeight), nearPlane, farPlane);
+
+        D3D11_DEPTH_STENCIL_DESC depthDisabledStencilDescription{};
+        depthDisabledStencilDescription.DepthEnable = false;
+        depthDisabledStencilDescription.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
+        depthDisabledStencilDescription.DepthFunc = D3D11_COMPARISON_LESS;
+        depthDisabledStencilDescription.StencilEnable = true;
+        depthDisabledStencilDescription.StencilWriteMask = 0xFF;
+        depthDisabledStencilDescription.StencilReadMask = 0xFF;
+        depthDisabledStencilDescription.FrontFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+        depthDisabledStencilDescription.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_INCR;
+        depthDisabledStencilDescription.FrontFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
+        depthDisabledStencilDescription.FrontFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
+        depthDisabledStencilDescription.BackFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+        depthDisabledStencilDescription.BackFace.StencilDepthFailOp = D3D11_STENCIL_OP_DECR;
+        depthDisabledStencilDescription.BackFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
+        depthDisabledStencilDescription.BackFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
+
+        if (FAILED(m_device->CreateDepthStencilState(&depthDisabledStencilDescription, &m_depthDisabledStencilState)))
         {
             MessageBox(hWnd, L"Could not create ID3D11DepthStencilState m_depthDisabledStencilState", L"Error", MB_OK);
             return false;
