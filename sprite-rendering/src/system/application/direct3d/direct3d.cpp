@@ -254,4 +254,99 @@ namespace GP
         return true;
     }
 
+    void CDirect3D::Shutdown()
+    {
+        if (m_swapChain)
+        {
+            m_swapChain->SetFullscreenState(false, nullptr);
+        }
+
+        if (m_deviceContext)
+        {
+            m_deviceContext->ClearState();
+            m_deviceContext->Flush();
+        }
+
+        if (m_depthStencilView)
+        {
+            m_depthStencilView->Release();
+            m_depthStencilView = nullptr;
+        }
+
+        if (m_renderTargetView)
+        {
+            m_renderTargetView->Release();
+            m_renderTargetView = nullptr;
+        }
+
+        if (m_rasterizerState)
+        {
+            m_rasterizerState->Release();
+            m_rasterizerState = nullptr;
+        }
+
+        if (m_depthStencilState)
+        {
+            m_depthStencilState->Release();
+            m_depthStencilState = nullptr;
+        }
+
+        if (m_depthDisabledStencilState)
+        {
+            m_depthDisabledStencilState->Release();
+            m_depthDisabledStencilState = nullptr;
+        }
+
+        if (m_depthStencilBuffer)
+        {
+            m_depthStencilBuffer->Release();
+            m_depthStencilBuffer = nullptr;
+        }
+
+        if (m_swapChain)
+        {
+            m_swapChain->Release();
+            m_swapChain = nullptr;
+        }
+
+        if (m_deviceContext)
+        {
+            m_deviceContext->Release();
+            m_deviceContext = nullptr;
+        }
+
+        if (m_device)
+        {
+            m_device->Release();
+            m_device = nullptr;
+        }
+    }
+
+    void CDirect3D::BeginScene(float red, float green, float blue, float alpha)
+    {
+        const std::array<float, 4> color = {red, green, blue, alpha};
+
+        m_deviceContext->ClearRenderTargetView(m_renderTargetView, color.data());
+        m_deviceContext->ClearDepthStencilView(m_depthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
+    }
+
+    void CDirect3D::EndScene()
+    {
+        if (m_vsync)
+        {
+            m_swapChain->Present(1, 0);
+        }
+        else
+        {
+            m_swapChain->Present(0, 0);
+        }
+    }
+
+    void CDirect3D::GetVideoCardInfo(char *cardName, int32_t &memory) const
+    {
+        constexpr size_t BYTES = 128;
+        strcpy_s(cardName, BYTES, m_videoCardDescription);
+        memory = m_videoCardMemory;
+    }
+
 } // namespace GP

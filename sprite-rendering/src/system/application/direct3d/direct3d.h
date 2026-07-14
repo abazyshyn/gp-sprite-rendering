@@ -29,11 +29,11 @@ namespace GP
         void GetProjectionMatrix(XMMATRIX &projectionMatrix) const { projectionMatrix = m_projectionMatrix; };
 
         void GetVideoCardInfo(char *cardName, int32_t &memory) const;
-        void SetBackBufferRenderTarget();
-        void ResetViewport();
+        void SetBackBufferRenderTarget() { m_deviceContext->OMSetRenderTargets(1, &m_renderTargetView, m_depthStencilView); }
+        void ResetViewport() { m_deviceContext->RSSetViewports(1, &m_viewport); }
 
-        void TurnZBufferOn();
-        void TurnZBufferOff();
+        void TurnZBufferOn() { m_deviceContext->OMSetDepthStencilState(m_depthStencilState, 1); }
+        void TurnZBufferOff() { m_deviceContext->OMSetDepthStencilState(m_depthDisabledStencilState, 1); }
 
     private:
         IDXGISwapChain *m_swapChain;
