@@ -1,5 +1,7 @@
 #pragma once
 
+#include "direct3d/direct3d.h"
+
 namespace GP
 {
     /////////////
@@ -22,7 +24,7 @@ namespace GP
         bool Render();
 
     private:
-        // CDirect3D m_Direct3D;
+        CDirect3D m_Direct3D;
     };
 
 } // namespace GP
