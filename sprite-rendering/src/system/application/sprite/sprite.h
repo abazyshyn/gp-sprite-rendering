@@ -19,8 +19,8 @@ namespace GP
         bool Render(ID3D11DeviceContext *deviceContext);
         void Update(float frameTime);
 
-        int32_t GetIndexCount() const { return 0; }
-        ID3D11ShaderResourceView *GetTexture() { return nullptr; }
+        int32_t GetIndexCount() const { return m_indexCount; }
+        ID3D11ShaderResourceView *GetTexture() { return m_textures[m_currentTextureIndex].GetTexture(); }
 
         void SetRenderLocation(int32_t x, int32_t y);
 
@@ -31,7 +31,7 @@ namespace GP
         void RenderBuffers(ID3D11DeviceContext *deviceContext);
 
         bool LoadTextures(ID3D11Device *device, ID3D11DeviceContext *deviceContext, std::string filename);
-        void ReleaseTexture();
+        void ReleaseTextures();
 
     private:
         struct Vertex_s
@@ -46,16 +46,16 @@ namespace GP
         unsigned long m_currentTextureIndex;
         float m_frameTime;
         float m_cycleTime;
-        int m_vertexCount;
-        int m_indexCount;
-        int m_screenWidth;
-        int m_screenHeight;
-        int m_bitmapWidth;
-        int m_bitmapHeight;
-        int m_renderX;
-        int m_renderY;
-        int m_prevPosX;
-        int m_prevPosY;
+        int32_t m_vertexCount;
+        int32_t m_indexCount;
+        int32_t m_screenWidth;
+        int32_t m_screenHeight;
+        int32_t m_bitmapWidth;
+        int32_t m_bitmapHeight;
+        int32_t m_renderX;
+        int32_t m_renderY;
+        int32_t m_prevPosX;
+        int32_t m_prevPosY;
 
         unsigned char _pad[4] = {0}; // Padding
     };

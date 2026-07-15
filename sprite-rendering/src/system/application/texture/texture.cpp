@@ -63,6 +63,27 @@ namespace GP
         return true;
     }
 
+    void CTexture::Shutdown()
+    {
+        if (m_textureView)
+        {
+            m_textureView->Release();
+            m_textureView = nullptr;
+        }
+
+        if (m_texture)
+        {
+            m_texture->Release();
+            m_texture = nullptr;
+        }
+
+        if (m_textureData)
+        {
+            stbi_image_free(m_textureData);
+            m_textureData = nullptr;
+        }
+    }
+
     bool CTexture::LoadTexture(std::string filename)
     {
         std::filesystem::path texturePath{std::filesystem::current_path() / "res" / "textures" / filename};
