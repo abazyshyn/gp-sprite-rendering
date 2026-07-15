@@ -1,5 +1,8 @@
 #pragma once
 
+///////////////////////
+// MY CLASS INCLUDES //
+///////////////////////
 #include "direct3d/direct3d.h"
 
 namespace GP
