@@ -56,8 +56,6 @@ namespace GP
         int32_t m_renderY;
         int32_t m_prevPosX;
         int32_t m_prevPosY;
-
-        unsigned char _pad[4] = {0}; // Padding
     };
 
 } // namespace GP

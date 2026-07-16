@@ -28,6 +28,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="src\system\application\direct3d\direct3d.cpp" />
+    <ClCompile Include="src\system\application\shaders\texture_shader.cpp" />
     <ClCompile Include="src\system\application\sprite\sprite.cpp" />
     <ClCompile Include="src\system\application\texture\texture.cpp" />
     <ClCompile Include="src\system\system.cpp" />
@@ -37,6 +38,7 @@
     <ClInclude Include="src\pch.h" />
     <ClInclude Include="src\system\application\application.h" />
     <ClInclude Include="src\system\application\direct3d\direct3d.h" />
+    <ClInclude Include="src\system\application\shaders\texture_shader.h" />
     <ClInclude Include="src\system\application\sprite\sprite.h" />
     <ClInclude Include="src\system\application\texture\texture.h" />
     <ClInclude Include="src\system\system.h" />
