@@ -40,9 +40,9 @@ namespace GP
             XMFLOAT2 texture;
         };
 
+        std::vector<CTexture> m_textures;
         ID3D11Buffer *m_vertexBuffer;
         ID3D11Buffer *m_indexBuffer;
-        std::vector<CTexture> m_textures;
         size_t m_currentTextureIndex;
         float m_frameTime;
         float m_cycleTime;

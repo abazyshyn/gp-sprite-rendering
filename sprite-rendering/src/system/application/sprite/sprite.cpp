@@ -8,7 +8,6 @@ namespace GP
     CSprite::CSprite()
         : m_vertexBuffer(nullptr),
           m_indexBuffer(nullptr),
-          m_textures(),
           m_currentTextureIndex(0),
           m_frameTime(0.0f),
           m_cycleTime(0.0f),
@@ -144,13 +143,13 @@ namespace GP
         if (m_indexBuffer)
         {
             m_indexBuffer->Release();
-            m_indexBuffer = 0;
+            m_indexBuffer = nullptr;
         }
 
         if (m_vertexBuffer)
         {
             m_vertexBuffer->Release();
-            m_vertexBuffer = 0;
+            m_vertexBuffer = nullptr;
         }
     }
 
@@ -164,10 +163,10 @@ namespace GP
         m_prevPosX = m_renderX;
         m_prevPosY = m_renderY;
 
-        float left = (static_cast<float>(m_screenWidth / 2) * -1.0f) + m_renderX;
-        float right = left + m_bitmapWidth;
-        float top = static_cast<float>(m_screenHeight / 2) - m_renderY;
-        float bottom = top - m_bitmapHeight;
+        float left = (static_cast<float>(m_screenWidth) / 2.0f * -1.0f) + static_cast<float>(m_renderX);
+        float right = left + static_cast<float>(m_bitmapWidth);
+        float top = static_cast<float>(m_screenHeight) / 2.0f - static_cast<float>(m_renderY);
+        float bottom = top - static_cast<float>(m_bitmapHeight);
 
         std::vector<Vertex_s> vertices(m_vertexCount);
 
@@ -229,7 +228,7 @@ namespace GP
         fin.get(input);
 
         std::string textureFilename{};
-        for (size_t i = 0; i < m_textures.size(); ++i)
+        for (CTexture &texture : m_textures)
         {
             fin.get(input);
             while (input != '\0')
@@ -238,7 +237,7 @@ namespace GP
                 fin.get(input);
             }
 
-            if (!m_textures[i].Init(device, deviceContext, textureFilename))
+            if (!texture.Init(device, deviceContext, textureFilename))
             {
                 return false;
             }
