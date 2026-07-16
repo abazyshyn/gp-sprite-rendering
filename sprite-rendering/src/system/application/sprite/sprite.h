@@ -43,7 +43,7 @@ namespace GP
         ID3D11Buffer *m_vertexBuffer;
         ID3D11Buffer *m_indexBuffer;
         std::vector<CTexture> m_textures;
-        unsigned long m_currentTextureIndex;
+        size_t m_currentTextureIndex;
         float m_frameTime;
         float m_cycleTime;
         int32_t m_vertexCount;

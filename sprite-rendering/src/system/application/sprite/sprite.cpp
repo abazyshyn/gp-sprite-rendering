@@ -55,6 +55,29 @@ namespace GP
         ReleaseTextures();
     }
 
+    bool CSprite::Render(ID3D11DeviceContext *deviceContext)
+    {
+        if (!UpdateBuffers(deviceContext))
+        {
+            return false;
+        }
+
+        RenderBuffers(deviceContext);
+
+        return true;
+    }
+
+    void CSprite::Update(float frameTime)
+    {
+        m_frameTime += frameTime;
+
+        if (m_frameTime >= m_cycleTime)
+        {
+            m_frameTime -= m_cycleTime;
+            m_currentTextureIndex += static_cast<size_t>(m_currentTextureIndex != m_textures.size());
+        }
+    }
+
     void CSprite::SetRenderLocation(int32_t x, int32_t y)
     {
         m_renderX = x;
@@ -131,6 +154,62 @@ namespace GP
         }
     }
 
+    bool CSprite::UpdateBuffers(ID3D11DeviceContext *deviceContext)
+    {
+        if ((m_prevPosX == m_renderX) && (m_prevPosY == m_renderY))
+        {
+            return true;
+        }
+
+        m_prevPosX = m_renderX;
+        m_prevPosY = m_renderY;
+
+        float left = (static_cast<float>(m_screenWidth / 2) * -1.0f) + m_renderX;
+        float right = left + m_bitmapWidth;
+        float top = static_cast<float>(m_screenHeight / 2) - m_renderY;
+        float bottom = top - m_bitmapHeight;
+
+        std::vector<Vertex_s> vertices(m_vertexCount);
+
+        vertices[0].position = XMFLOAT3(left, top, 0.0f);
+        vertices[0].texture = XMFLOAT2(0.0f, 0.0f);
+        vertices[1].position = XMFLOAT3(right, bottom, 0.0f);
+        vertices[1].texture = XMFLOAT2(1.0f, 1.0f);
+        vertices[2].position = XMFLOAT3(left, bottom, 0.0f);
+        vertices[2].texture = XMFLOAT2(0.0f, 1.0f);
+        vertices[3].position = XMFLOAT3(left, top, 0.0f);
+        vertices[3].texture = XMFLOAT2(0.0f, 0.0f);
+        vertices[4].position = XMFLOAT3(right, bottom, 0.0f);
+        vertices[4].texture = XMFLOAT2(1.0f, 1.0f);
+        vertices[5].position = XMFLOAT3(right, top, 0.0f);
+        vertices[5].texture = XMFLOAT2(1.0f, 0.0f);
+
+        D3D11_MAPPED_SUBRESOURCE mappedResource{};
+        if (FAILED(deviceContext->Map(m_vertexBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource)))
+        {
+            return false;
+        }
+
+        Vertex_s *vertexBufferData = static_cast<Vertex_s *>(mappedResource.pData);
+        memcpy(vertexBufferData, vertices.data(), vertices.size() * sizeof(Vertex_s));
+
+        deviceContext->Unmap(m_vertexBuffer, 0);
+        vertexBufferData = nullptr;
+
+        return true;
+    }
+
+    void CSprite::RenderBuffers(ID3D11DeviceContext *deviceContext)
+    {
+        const uint32_t vertexBufferStride = static_cast<uint32_t>(sizeof(Vertex_s));
+        const uint32_t vertexBufferOffset = 0;
+        const uint32_t indexBufferOffset = 0;
+
+        deviceContext->IASetVertexBuffers(0, 1, &m_vertexBuffer, &vertexBufferStride, &vertexBufferOffset);
+        deviceContext->IASetIndexBuffer(m_indexBuffer, DXGI_FORMAT_R32_UINT, indexBufferOffset);
+        deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+    }
+
     bool CSprite::LoadTextures(ID3D11Device *device, ID3D11DeviceContext *deviceContext, std::string filename)
     {
         std::ifstream fin;
@@ -146,7 +225,7 @@ namespace GP
 
         m_textures.resize(textureCount);
 
-        char input;
+        char input{};
         fin.get(input);
 
         std::string textureFilename{};
