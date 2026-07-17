@@ -27,6 +27,45 @@ namespace GP
         return true;
     }
 
+    void CTextureShader::Shutdown()
+    {
+        ShutdownShader();
+    }
+
+    bool CTextureShader::Render(ID3D11DeviceContext *deviceContext, int32_t indexCount)
+    {
+        RenderShader(deviceContext, indexCount);
+
+        return true;
+    }
+
+    void CTextureShader::SetShaderTexture(ID3D11DeviceContext *deviceContext, ID3D11ShaderResourceView *texture)
+    {
+        deviceContext->PSSetShaderResources(0, 1, &texture);
+    }
+
+    bool CTextureShader::SetShaderMatrixBuffer(ID3D11DeviceContext *deviceContext, XMMATRIX worldMatrix, XMMATRIX viewMatrix, XMMATRIX projectionMatrix)
+    {
+        D3D11_MAPPED_SUBRESOURCE mappedResource{};
+        if (FAILED(deviceContext->Map(m_matrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource)))
+        {
+            return false;
+        }
+
+        MatrixBuffer_s *matrixData = static_cast<MatrixBuffer_s *>(mappedResource.pData);
+
+        matrixData->worldMatrix = XMMatrixTranspose(worldMatrix);
+        matrixData->viewMatrix = XMMatrixTranspose(viewMatrix);
+        matrixData->projectionMatrix = XMMatrixTranspose(projectionMatrix);
+
+        deviceContext->Unmap(m_matrixBuffer, 0);
+
+        const uint32_t bufferStartSlot = 0;
+        deviceContext->VSSetConstantBuffers(bufferStartSlot, 1, &m_matrixBuffer);
+
+        return true;
+    }
+
     bool CTextureShader::InitShader(ID3D11Device *device, HWND hWnd, const std::filesystem::path &vsFilename, const std::filesystem::path &psFilename)
     {
         ID3DBlob *errorMessage = nullptr;
@@ -145,6 +184,72 @@ namespace GP
         }
 
         return true;
+    }
+
+    void CTextureShader::ShutdownShader()
+    {
+        if (m_vertexShader)
+        {
+            m_vertexShader->Release();
+            m_vertexShader = nullptr;
+        }
+
+        if (m_pixelShader)
+        {
+            m_pixelShader->Release();
+            m_pixelShader = nullptr;
+        }
+
+        if (m_inputLayout)
+        {
+            m_inputLayout->Release();
+            m_inputLayout = nullptr;
+        }
+
+        if (m_matrixBuffer)
+        {
+            m_matrixBuffer->Release();
+            m_matrixBuffer = nullptr;
+        }
+
+        if (m_sampleState)
+        {
+            m_sampleState->Release();
+            m_sampleState = nullptr;
+        }
+    }
+
+    void CTextureShader::OutputShaderErrorMessage(ID3D10Blob *errorMessage, HWND hWnd, const std::filesystem::path &shaderFilename)
+    {
+        char *compileErrors = static_cast<char *>(errorMessage->GetBufferPointer());
+        size_t bufferSize = errorMessage->GetBufferSize();
+
+        std::ofstream fout;
+        fout.open("shader-error.txt");
+        if (!fout.is_open())
+        {
+            MessageBox(hWnd, L"Error compiling shader. Could not open shader-error.txt for logging.", shaderFilename.c_str(), MB_OK);
+            return;
+        }
+
+        for (size_t i = 0; i < bufferSize; ++i)
+        {
+            fout << compileErrors[i];
+        }
+
+        fout.close();
+
+        errorMessage->Release();
+        errorMessage = nullptr;
+        MessageBox(hWnd, L"Error compiling shader. Check shader-error.txt for message.", shaderFilename.c_str(), MB_OK);
+    }
+
+    void CTextureShader::RenderShader(ID3D11DeviceContext *deviceContext, int32_t indexCount)
+    {
+        deviceContext->IASetInputLayout(m_inputLayout);
+        deviceContext->VSSetShader(m_vertexShader, nullptr, 0);
+        deviceContext->PSSetShader(m_pixelShader, nullptr, 0);
+        deviceContext->DrawIndexed(indexCount, 0, 0);
     }
 
 } // namespace GP

@@ -4,6 +4,7 @@
 // MY CLASS INCLUDES //
 ///////////////////////
 #include "direct3d/direct3d.h"
+#include "shaders/texture_shader.h"
 #include "sprite/sprite.h"
 
 namespace GP
@@ -29,6 +30,7 @@ namespace GP
 
     private:
         CDirect3D m_Direct3D;
+        CTextureShader m_TextureShader;
         CSprite m_Sprite;
     };
 
