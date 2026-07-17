@@ -27,20 +27,24 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="src\system\application\camera\camera.cpp" />
     <ClCompile Include="src\system\application\direct3d\direct3d.cpp" />
     <ClCompile Include="src\system\application\shaders\texture_shader.cpp" />
     <ClCompile Include="src\system\application\sprite\sprite.cpp" />
     <ClCompile Include="src\system\application\texture\texture.cpp" />
+    <ClCompile Include="src\system\application\timer\timer.cpp" />
     <ClCompile Include="src\system\system.cpp" />
     <ClCompile Include="vendor\stb_image\stb_image.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\pch.h" />
     <ClInclude Include="src\system\application\application.h" />
+    <ClInclude Include="src\system\application\camera\camera.h" />
     <ClInclude Include="src\system\application\direct3d\direct3d.h" />
     <ClInclude Include="src\system\application\shaders\texture_shader.h" />
     <ClInclude Include="src\system\application\sprite\sprite.h" />
     <ClInclude Include="src\system\application\texture\texture.h" />
+    <ClInclude Include="src\system\application\timer\timer.h" />
     <ClInclude Include="src\system\system.h" />
     <ClInclude Include="vendor\stb_image\stb_image.h" />
   </ItemGroup>
