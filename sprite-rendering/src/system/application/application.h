@@ -4,8 +4,9 @@
 // MY CLASS INCLUDES //
 ///////////////////////
 #include "direct3d/direct3d.h"
-#include "shaders/texture_shader.h"
 #include "sprite/sprite.h"
+#include "shaders/texture_shader.h"
+#include "camera/camera.h"
 #include "timer/timer.h"
 
 namespace GP
@@ -33,6 +34,7 @@ namespace GP
         CDirect3D m_Direct3D;
         CTextureShader m_TextureShader;
         CSprite m_Sprite;
+        CCamera m_Camera;
         CTimer m_Timer;
     };
 

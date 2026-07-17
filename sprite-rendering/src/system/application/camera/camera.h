@@ -10,8 +10,8 @@ namespace GP
 
         void Render();
 
-        void SetPosition(XMFLOAT3 position) { m_position = position; }
-        void SetRotation(XMFLOAT3 rotation) { m_rotation = rotation; }
+        void SetPosition(float x, float y, float z) { m_position = XMFLOAT3(x, y, z); }
+        void SetRotation(float x, float y, float z) { m_rotation = XMFLOAT3(x, y, z); }
         XMFLOAT3 GetPosition() const { return m_position; }
         XMFLOAT3 GetRotation() const { return m_rotation; }
         void GetViewMatrix(XMMATRIX &viewMatrix) const { viewMatrix = m_viewMatrix; }
