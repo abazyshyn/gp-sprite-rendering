@@ -11,7 +11,7 @@ namespace GP
         bool Init();
         void Frame();
 
-        float GetTime() const;
+        float GetFrameTime() const { return m_frameTime; };
 
     private:
         float m_frequency;

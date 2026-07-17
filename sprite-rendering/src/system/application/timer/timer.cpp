@@ -29,4 +29,16 @@ namespace GP
         return true;
     }
 
+    void CTimer::Frame()
+    {
+        int64_t currentTime{};
+        QueryPerformanceCounter(reinterpret_cast<LARGE_INTEGER *>(&currentTime));
+
+        int64_t elapsedTicks = currentTime - m_startTime;
+
+        m_frameTime = static_cast<float>(elapsedTicks) / m_frequency;
+
+        m_startTime = currentTime;
+    }
+
 } // namespace GP
