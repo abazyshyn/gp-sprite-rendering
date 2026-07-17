@@ -56,7 +56,7 @@ namespace GP
 
         matrixData->worldMatrix = XMMatrixTranspose(worldMatrix);
         matrixData->viewMatrix = XMMatrixTranspose(viewMatrix);
-        matrixData->projectionMatrix = XMMatrixTranspose(projectionMatrix);
+        matrixData->orthoMatrix = XMMatrixTranspose(projectionMatrix);
 
         deviceContext->Unmap(m_matrixBuffer, 0);
 

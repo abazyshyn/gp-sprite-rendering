@@ -76,6 +76,9 @@ namespace GP
             return false;
         }
 
+        m_TextureShader.SetShaderTexture(m_Direct3D.GetDeviceContext(), m_Sprite.GetTexture());
+        m_TextureShader.SetShaderMatrixBuffer(m_Direct3D.GetDeviceContext(), worldMatrix, viewMatrix, orthoMatrix);
+
         if (!m_TextureShader.Render(m_Direct3D.GetDeviceContext(), m_Sprite.GetIndexCount()))
         {
             return false;
