@@ -14,7 +14,8 @@ namespace GP
         CSprite();
 
         bool Init(std::string spriteFilename, ID3D11Device *device, ID3D11DeviceContext *deviceContext,
-                  int32_t screenWidth, int32_t screenHeight, int32_t rednerX, int32_t renderY);
+                  int32_t screenWidth, int32_t screenHeight, int32_t rednerX, int32_t renderY,
+                  int32_t renderWidth = 0, int32_t renderHeight = 0);
         void Shutdown();
         bool Render(ID3D11DeviceContext *deviceContext);
         void Update(float frameTime);
@@ -54,6 +55,8 @@ namespace GP
         int32_t m_bitmapHeight;
         int32_t m_renderX;
         int32_t m_renderY;
+        int32_t m_renderWidth;
+        int32_t m_renderHeight;
         int32_t m_prevPosX;
         int32_t m_prevPosY;
     };

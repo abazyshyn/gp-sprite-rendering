@@ -23,7 +23,7 @@ namespace GP
         m_Camera.SetRotation(0.0f, 0.0f, 0.0f);
 
         // TODO: should be array of sprites
-        if (!m_Sprite.Init("sprite-knight.txt", m_Direct3D.GetDevice(), m_Direct3D.GetDeviceContext(), windowWidth, windowHeight, 0, 0))
+        if (!m_Sprite.Init("sprite-knight.txt", m_Direct3D.GetDevice(), m_Direct3D.GetDeviceContext(), windowWidth, windowHeight, 300, 300, 256.5f, 186.3f))
         {
             MessageBox(hWnd, L"Could not initialize sprite", L"Error", MB_OK);
             return false;

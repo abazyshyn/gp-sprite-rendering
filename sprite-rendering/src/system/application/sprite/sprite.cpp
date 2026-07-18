@@ -25,13 +25,16 @@ namespace GP
     }
 
     bool CSprite::Init(std::string spriteFilename, ID3D11Device *device, ID3D11DeviceContext *deviceContext,
-                       int32_t screenWidth, int32_t screenHeight, int32_t rednerX, int32_t renderY)
+                       int32_t screenWidth, int32_t screenHeight, int32_t rednerX, int32_t renderY,
+                       int32_t renderWidth, int32_t renderHeight)
     {
         m_screenWidth = screenWidth;
         m_screenHeight = screenHeight;
 
         m_renderX = rednerX;
         m_renderY = renderY;
+        m_renderWidth = renderWidth;
+        m_renderHeight = renderHeight;
 
         m_frameTime = 0.0f;
 
@@ -168,9 +171,9 @@ namespace GP
         m_prevPosY = m_renderY;
 
         float left = (static_cast<float>(m_screenWidth) / 2.0f * -1.0f) + static_cast<float>(m_renderX);
-        float right = left + static_cast<float>(m_bitmapWidth);
+        float right = left + static_cast<float>(m_renderWidth ? m_renderWidth : m_bitmapWidth);
         float top = static_cast<float>(m_screenHeight) / 2.0f - static_cast<float>(m_renderY);
-        float bottom = top - static_cast<float>(m_bitmapHeight);
+        float bottom = top - static_cast<float>(m_renderHeight ? m_renderHeight : m_bitmapHeight);
 
         std::vector<Vertex_s> vertices(m_vertexCount);
 
