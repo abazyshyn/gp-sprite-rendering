@@ -34,6 +34,8 @@ namespace GP
 
         void TurnZBufferOn() { m_deviceContext->OMSetDepthStencilState(m_depthStencilState, 1); }
         void TurnZBufferOff() { m_deviceContext->OMSetDepthStencilState(m_depthDisabledStencilState, 1); }
+        void TurnAlphaBlendingOn(std::array<float, 4> blendFactor) { m_deviceContext->OMSetBlendState(m_alphaBlendState, blendFactor.data(), 0xFFFFFFFF); }
+        void TurnAlphaBlendingOff() { m_deviceContext->OMSetBlendState(nullptr, nullptr, 0xFFFFFFFF); }
 
     private:
         IDXGISwapChain *m_swapChain;
@@ -43,6 +45,7 @@ namespace GP
         ID3D11Texture2D *m_depthStencilBuffer;
         ID3D11DepthStencilState *m_depthStencilState;
         ID3D11DepthStencilView *m_depthStencilView;
+        ID3D11BlendState *m_alphaBlendState;
         ID3D11RasterizerState *m_rasterizerState;
         ID3D11DepthStencilState *m_depthDisabledStencilState;
         D3D11_VIEWPORT m_viewport;

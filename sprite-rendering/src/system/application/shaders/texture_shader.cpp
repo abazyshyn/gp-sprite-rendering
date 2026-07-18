@@ -56,7 +56,7 @@ namespace GP
 
         matrixData->worldMatrix = XMMatrixTranspose(worldMatrix);
         matrixData->viewMatrix = XMMatrixTranspose(viewMatrix);
-        matrixData->orthoMatrix = XMMatrixTranspose(projectionMatrix);
+        matrixData->projectionMatrix = XMMatrixTranspose(projectionMatrix);
 
         deviceContext->Unmap(m_matrixBuffer, 0);
 
@@ -141,12 +141,21 @@ namespace GP
             return false;
         }
 
-        vertexShaderBuffer->Release();
-        vertexShaderBuffer = nullptr;
-        pixelShaderBuffer->Release();
-        pixelShaderBuffer = nullptr;
-        errorMessage->Release();
-        errorMessage = nullptr;
+        if (vertexShaderBuffer)
+        {
+            vertexShaderBuffer->Release();
+            vertexShaderBuffer = nullptr;
+        }
+        if (pixelShaderBuffer)
+        {
+            pixelShaderBuffer->Release();
+            pixelShaderBuffer = nullptr;
+        }
+        if (errorMessage)
+        {
+            errorMessage->Release();
+            errorMessage = nullptr;
+        }
 
         D3D11_BUFFER_DESC matrixBufferDescription{};
         matrixBufferDescription.Usage = D3D11_USAGE_DYNAMIC;
@@ -249,6 +258,7 @@ namespace GP
         deviceContext->IASetInputLayout(m_inputLayout);
         deviceContext->VSSetShader(m_vertexShader, nullptr, 0);
         deviceContext->PSSetShader(m_pixelShader, nullptr, 0);
+        deviceContext->PSSetSamplers(0, 1, &m_sampleState);
         deviceContext->DrawIndexed(indexCount, 0, 0);
     }
 

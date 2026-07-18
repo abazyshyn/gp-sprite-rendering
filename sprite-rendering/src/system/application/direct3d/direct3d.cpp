@@ -194,6 +194,22 @@ namespace GP
 
         m_deviceContext->OMSetRenderTargets(1, &m_renderTargetView, m_depthStencilView);
 
+        D3D11_BLEND_DESC blendDescription{};
+        blendDescription.RenderTarget[0].BlendEnable = TRUE;
+        blendDescription.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
+        blendDescription.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
+        blendDescription.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
+        blendDescription.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
+        blendDescription.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;
+        blendDescription.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
+        blendDescription.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+
+        if (FAILED(m_device->CreateBlendState(&blendDescription, &m_alphaBlendState)))
+        {
+            MessageBox(hWnd, L"Could not create ID3D11BlendState m_blendState", L"Error", MB_OK);
+            return false;
+        }
+
         D3D11_RASTERIZER_DESC rasterizerDescription{};
         rasterizerDescription.AntialiasedLineEnable = false;
         rasterizerDescription.CullMode = D3D11_CULL_BACK;

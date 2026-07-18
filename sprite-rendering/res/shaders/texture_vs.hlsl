@@ -21,7 +21,7 @@ struct Vertex_s
 struct PixelInput_s
 {
     float4 position : SV_POSITION0;
-    float2 tex : SV_TEXCOORD0;
+    float2 tex : TEXCOORD0;
 };
 
 ////////////////////////////////////////////////////////////////////////////////

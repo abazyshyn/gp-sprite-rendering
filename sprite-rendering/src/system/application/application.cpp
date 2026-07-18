@@ -19,11 +19,11 @@ namespace GP
             return false;
         }
 
-        m_Camera.SetPosition(0.0f, 0.0f, 0.0f);
+        m_Camera.SetPosition(0.0f, 0.0f, -1.0f);
         m_Camera.SetRotation(0.0f, 0.0f, 0.0f);
 
         // TODO: should be array of sprites
-        if (!m_Sprite.Init("sprite-data-01.txt", m_Direct3D.GetDevice(), m_Direct3D.GetDeviceContext(), windowWidth, windowHeight, 50, 50))
+        if (!m_Sprite.Init("sprite-knight.txt", m_Direct3D.GetDevice(), m_Direct3D.GetDeviceContext(), windowWidth, windowHeight, 0, 0))
         {
             MessageBox(hWnd, L"Could not initialize sprite", L"Error", MB_OK);
             return false;
@@ -34,6 +34,8 @@ namespace GP
             MessageBox(hWnd, L"Could not initialize texture shader", L"Error", MB_OK);
             return false;
         }
+
+        return true;
     }
 
     void CApplication::Shutdown()
@@ -70,14 +72,15 @@ namespace GP
         m_Direct3D.GetOrthoMatrix(orthoMatrix);
 
         m_Direct3D.TurnZBufferOff();
+        m_Direct3D.TurnAlphaBlendingOn({0.0f, 0.0f, 0.0f, 0.0f});
 
         if (!m_Sprite.Render(m_Direct3D.GetDeviceContext()))
         {
             return false;
         }
 
-        m_TextureShader.SetShaderTexture(m_Direct3D.GetDeviceContext(), m_Sprite.GetTexture());
         m_TextureShader.SetShaderMatrixBuffer(m_Direct3D.GetDeviceContext(), worldMatrix, viewMatrix, orthoMatrix);
+        m_TextureShader.SetShaderTexture(m_Direct3D.GetDeviceContext(), m_Sprite.GetTexture());
 
         if (!m_TextureShader.Render(m_Direct3D.GetDeviceContext(), m_Sprite.GetIndexCount()))
         {
@@ -85,6 +88,7 @@ namespace GP
         }
 
         m_Direct3D.TurnZBufferOn();
+        m_Direct3D.TurnAlphaBlendingOff();
 
         m_Direct3D.EndScene();
         return true;

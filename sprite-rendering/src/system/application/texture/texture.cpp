@@ -26,14 +26,14 @@ namespace GP
         textureDescription.Width = m_width;
         textureDescription.Height = m_height;
         textureDescription.MipLevels = 0;
-        textureDescription.ArraySize = 0;
+        textureDescription.ArraySize = 1;
         textureDescription.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
         textureDescription.SampleDesc.Count = 1;
         textureDescription.SampleDesc.Quality = 0;
         textureDescription.Usage = D3D11_USAGE_DEFAULT;
         textureDescription.BindFlags = D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_RENDER_TARGET;
         textureDescription.CPUAccessFlags = 0;
-        textureDescription.MiscFlags = 0;
+        textureDescription.MiscFlags = D3D11_RESOURCE_MISC_GENERATE_MIPS;
 
         if (FAILED(device->CreateTexture2D(&textureDescription, nullptr, &m_texture)))
         {
@@ -89,12 +89,11 @@ namespace GP
         std::filesystem::path texturePath{std::filesystem::current_path() / "res" / "textures" / filename};
 
         // stbi_set_flip_vertically_on_load(true);
-        int32_t channels = 0;
+        int32_t channels{0};
         m_textureData = stbi_load(texturePath.string().c_str(), &m_width, &m_height, &channels, 0);
 
         if (!m_textureData)
         {
-            stbi_image_free(m_textureData);
             return false;
         }
 

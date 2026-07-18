@@ -21,14 +21,14 @@ namespace GP
 
     private:
         bool Frame();
-        void InitWindows(int32_t &windowWidth, int32_t windowHeight);
+        void InitWindows(int32_t &windowWidth, int32_t &windowHeight);
         void ShutdownWindows();
 
     private:
         HWND m_hWnd;
         HINSTANCE m_hInstance;
         LPCWSTR m_applicationName;
-        // CApplication m_Application;
+        CApplication m_Application;
     };
 
     /////////////

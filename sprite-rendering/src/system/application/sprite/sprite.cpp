@@ -73,7 +73,11 @@ namespace GP
         if (m_frameTime >= m_cycleTime)
         {
             m_frameTime -= m_cycleTime;
-            m_currentTextureIndex += static_cast<size_t>(m_currentTextureIndex != m_textures.size());
+            m_currentTextureIndex += 1;
+            if (m_currentTextureIndex == m_textures.size())
+            {
+                m_currentTextureIndex = 0;
+            }
         }
     }
 
@@ -89,14 +93,14 @@ namespace GP
         m_indexCount = m_vertexCount;
 
         std::vector<Vertex_s> vertices(static_cast<size_t>(m_vertexCount));
-        std::vector<size_t> indices(static_cast<size_t>(m_indexCount));
+        std::vector<uint32_t> indices(static_cast<size_t>(m_indexCount));
 
         m_prevPosX = -1;
         m_prevPosY = -1;
 
         for (size_t i = 0; i < indices.size(); ++i)
         {
-            indices[i] = i;
+            indices[i] = static_cast<uint32_t>(i);
         }
 
         D3D11_BUFFER_DESC vertexBufferDescription{};
@@ -119,7 +123,7 @@ namespace GP
 
         D3D11_BUFFER_DESC indexBufferDescription{};
         indexBufferDescription.Usage = D3D11_USAGE_DEFAULT;
-        indexBufferDescription.ByteWidth = static_cast<uint32_t>(indices.size()) * static_cast<uint32_t>(sizeof(size_t));
+        indexBufferDescription.ByteWidth = static_cast<uint32_t>(indices.size()) * static_cast<uint32_t>(sizeof(uint32_t));
         indexBufferDescription.BindFlags = D3D11_BIND_INDEX_BUFFER;
         indexBufferDescription.CPUAccessFlags = 0;
         vertexBufferDescription.MiscFlags = 0;
@@ -178,10 +182,10 @@ namespace GP
         vertices[2].texture = XMFLOAT2(0.0f, 1.0f);
         vertices[3].position = XMFLOAT3(left, top, 0.0f);
         vertices[3].texture = XMFLOAT2(0.0f, 0.0f);
-        vertices[4].position = XMFLOAT3(right, bottom, 0.0f);
-        vertices[4].texture = XMFLOAT2(1.0f, 1.0f);
-        vertices[5].position = XMFLOAT3(right, top, 0.0f);
-        vertices[5].texture = XMFLOAT2(1.0f, 0.0f);
+        vertices[4].position = XMFLOAT3(right, top, 0.0f);
+        vertices[4].texture = XMFLOAT2(1.0f, 0.0f);
+        vertices[5].position = XMFLOAT3(right, bottom, 0.0f);
+        vertices[5].texture = XMFLOAT2(1.0f, 1.0f);
 
         D3D11_MAPPED_SUBRESOURCE mappedResource{};
         if (FAILED(deviceContext->Map(m_vertexBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource)))
@@ -212,7 +216,7 @@ namespace GP
     bool CSprite::LoadTextures(ID3D11Device *device, ID3D11DeviceContext *deviceContext, std::string filename)
     {
         std::ifstream fin;
-        std::filesystem::path texturePath{std::filesystem::current_path() / "res" / "models" / filename};
+        std::filesystem::path texturePath{std::filesystem::current_path() / "res" / "sprites" / filename};
         fin.open(texturePath);
         if (fin.fail())
         {
@@ -231,7 +235,7 @@ namespace GP
         for (CTexture &texture : m_textures)
         {
             fin.get(input);
-            while (input != '\0')
+            while (input != '\n')
             {
                 textureFilename.push_back(input);
                 fin.get(input);

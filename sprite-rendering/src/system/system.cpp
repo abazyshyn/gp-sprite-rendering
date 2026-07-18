@@ -18,7 +18,11 @@ namespace GP
         int32_t windowHeight{};
         InitWindows(windowWidth, windowHeight);
 
-        // Init app
+        if (!m_Application.Init(windowWidth, windowHeight, m_hWnd))
+        {
+            MessageBox(m_hWnd, L"Could not initialize application", L"Error", MB_OK);
+            return false;
+        }
 
         return true;
     }
@@ -67,15 +71,15 @@ namespace GP
 
     bool CSystem::Frame()
     {
-        // if (!m_Application.Frame())
-        // {
-        //     return false;
-        // }
+        if (!m_Application.Frame())
+        {
+            return false;
+        }
 
         return true;
     }
 
-    void CSystem::InitWindows(int32_t &windowWidth, int32_t windowHeight)
+    void CSystem::InitWindows(int32_t &windowWidth, int32_t &windowHeight)
     {
         applicationHandler = this;
 
