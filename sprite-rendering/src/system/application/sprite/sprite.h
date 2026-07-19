@@ -19,9 +19,11 @@ namespace GP
         void Shutdown();
         bool Render(ID3D11DeviceContext *deviceContext);
         void Update(float frameTime);
+        void UpdateTextureTranslation(bool flagTrueIfShouldUpdate);
 
         int32_t GetIndexCount() const { return m_indexCount; }
         ID3D11ShaderResourceView *GetTexture() { return m_textures[m_currentTextureIndex].GetTexture(); }
+        float GetTextureTranslation() const { return m_textureTranslation; }
 
         void SetRenderLocation(int32_t x, int32_t y);
 
@@ -47,6 +49,7 @@ namespace GP
         size_t m_currentTextureIndex;
         float m_frameTime;
         float m_cycleTime;
+        float m_textureTranslation;
         int32_t m_vertexCount;
         int32_t m_indexCount;
         int32_t m_screenWidth;

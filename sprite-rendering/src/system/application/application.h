@@ -33,7 +33,8 @@ namespace GP
     private:
         CDirect3D m_Direct3D;
         CTextureShader m_TextureShader;
-        CSprite m_Sprite;
+        std::array<CSprite, 3> m_sprites;
+        // CSprite m_Sprite;
         CCamera m_Camera;
         CTimer m_Timer;
     };

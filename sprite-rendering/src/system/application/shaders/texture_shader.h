@@ -11,7 +11,8 @@ namespace GP
         bool Init(ID3D11Device *device, HWND hWnd);
         void Shutdown();
         bool Render(ID3D11DeviceContext *deviceContext, int32_t indexCount);
-        void SetShaderTexture(ID3D11DeviceContext *deviceContext, ID3D11ShaderResourceView *texture);
+        void SetShaderTexture(ID3D11DeviceContext *deviceContext, ID3D11ShaderResourceView *texture) { deviceContext->PSSetShaderResources(0, 1, &texture); };
+        bool SetShaderTextureTranslationBuffer(ID3D11DeviceContext *deviceContext, float textureOffset = 0.0f);
         bool SetShaderMatrixBuffer(ID3D11DeviceContext *deviceContext, XMMATRIX worldMatrix, XMMATRIX viewMatrix, XMMATRIX projectionMatrix);
 
     private:
@@ -21,6 +22,12 @@ namespace GP
         void RenderShader(ID3D11DeviceContext *deviceContext, int32_t indexCount);
 
     private:
+        struct TranslationBuffer_s
+        {
+            float textureOffset;
+            XMFLOAT3 _padding;
+        };
+
         struct MatrixBuffer_s
         {
             XMMATRIX worldMatrix;
@@ -31,6 +38,7 @@ namespace GP
         ID3D11VertexShader *m_vertexShader;
         ID3D11PixelShader *m_pixelShader;
         ID3D11InputLayout *m_inputLayout;
+        ID3D11Buffer *m_translationBuffer;
         ID3D11Buffer *m_matrixBuffer;
         ID3D11SamplerState *m_sampleState;
     };

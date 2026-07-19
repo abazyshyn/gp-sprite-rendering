@@ -90,7 +90,7 @@ namespace GP
 
         // stbi_set_flip_vertically_on_load(true);
         int32_t channels{0};
-        m_textureData = stbi_load(texturePath.string().c_str(), &m_width, &m_height, &channels, 0);
+        m_textureData = stbi_load(texturePath.string().c_str(), &m_width, &m_height, &channels, 4);
 
         if (!m_textureData)
         {

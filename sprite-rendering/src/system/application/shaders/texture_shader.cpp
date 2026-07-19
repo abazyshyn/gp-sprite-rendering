@@ -9,6 +9,7 @@ namespace GP
         : m_vertexShader(nullptr),
           m_pixelShader(nullptr),
           m_inputLayout(nullptr),
+          m_translationBuffer(nullptr),
           m_matrixBuffer(nullptr),
           m_sampleState(nullptr)
     {
@@ -39,9 +40,23 @@ namespace GP
         return true;
     }
 
-    void CTextureShader::SetShaderTexture(ID3D11DeviceContext *deviceContext, ID3D11ShaderResourceView *texture)
+    bool CTextureShader::SetShaderTextureTranslationBuffer(ID3D11DeviceContext *deviceContext, float textureOffset /*= 0.0f*/)
     {
-        deviceContext->PSSetShaderResources(0, 1, &texture);
+        D3D11_MAPPED_SUBRESOURCE mappedResource{};
+        if (FAILED(deviceContext->Map(m_translationBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource)))
+        {
+            return false;
+        }
+
+        TranslationBuffer_s *translationData = static_cast<TranslationBuffer_s *>(mappedResource.pData);
+        translationData->textureOffset = textureOffset;
+
+        deviceContext->Unmap(m_translationBuffer, 0);
+
+        const uint32_t bufferStartSlot = 0;
+        deviceContext->PSSetConstantBuffers(bufferStartSlot, 1, &m_translationBuffer);
+
+        return true;
     }
 
     bool CTextureShader::SetShaderMatrixBuffer(ID3D11DeviceContext *deviceContext, XMMATRIX worldMatrix, XMMATRIX viewMatrix, XMMATRIX projectionMatrix)
@@ -155,6 +170,20 @@ namespace GP
         {
             errorMessage->Release();
             errorMessage = nullptr;
+        }
+
+        D3D11_BUFFER_DESC translationBufferDescription{};
+        translationBufferDescription.Usage = D3D11_USAGE_DYNAMIC;
+        translationBufferDescription.ByteWidth = static_cast<uint32_t>(sizeof(TranslationBuffer_s));
+        translationBufferDescription.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+        translationBufferDescription.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+        translationBufferDescription.MiscFlags = 0;
+        translationBufferDescription.StructureByteStride = 0;
+
+        if (FAILED(device->CreateBuffer(&translationBufferDescription, nullptr, &m_translationBuffer)))
+        {
+            MessageBox(hWnd, L"Could not create ID3D11Buffer m_translationBuffer", L"Error", MB_OK);
+            return false;
         }
 
         D3D11_BUFFER_DESC matrixBufferDescription{};

@@ -22,8 +22,18 @@ namespace GP
         m_Camera.SetPosition(0.0f, 0.0f, -1.0f);
         m_Camera.SetRotation(0.0f, 0.0f, 0.0f);
 
-        // TODO: should be array of sprites
-        if (!m_Sprite.Init("sprite-knight.txt", m_Direct3D.GetDevice(), m_Direct3D.GetDeviceContext(), windowWidth, windowHeight, 300, 300, 256.5f, 186.3f))
+        // TODO: figure out how to improve this.
+        if (!m_sprites[0].Init("sprite-back-temp.txt", m_Direct3D.GetDevice(), m_Direct3D.GetDeviceContext(), windowWidth, windowHeight, 0, 0, 800, 600))
+        {
+            MessageBox(hWnd, L"Could not initialize sprite", L"Error", MB_OK);
+            return false;
+        }
+        if (!m_sprites[1].Init("spite-platform-temp.txt", m_Direct3D.GetDevice(), m_Direct3D.GetDeviceContext(), windowWidth, windowHeight, 0, 10, 800, 600))
+        {
+            MessageBox(hWnd, L"Could not initialize sprite", L"Error", MB_OK);
+            return false;
+        }
+        if (!m_sprites[2].Init("sprite-knight.txt", m_Direct3D.GetDevice(), m_Direct3D.GetDeviceContext(), windowWidth, windowHeight, 300, 340, 256, 186))
         {
             MessageBox(hWnd, L"Could not initialize sprite", L"Error", MB_OK);
             return false;
@@ -40,7 +50,10 @@ namespace GP
 
     void CApplication::Shutdown()
     {
-        m_Sprite.Shutdown();
+        for (CSprite &sprite : m_sprites)
+        {
+            sprite.Shutdown();
+        }
         m_TextureShader.Shutdown();
         m_Direct3D.Shutdown();
     }
@@ -48,7 +61,11 @@ namespace GP
     bool CApplication::Frame()
     {
         m_Timer.Frame();
-        m_Sprite.Update(m_Timer.GetFrameTime());
+        for (size_t i = 0; i < m_sprites.size(); ++i)
+        {
+            m_sprites[i].Update(m_Timer.GetFrameTime());
+            m_sprites[i].UpdateTextureTranslation(i == 1);
+        }
 
         if (!Render())
         {
@@ -74,17 +91,23 @@ namespace GP
         m_Direct3D.TurnZBufferOff();
         m_Direct3D.TurnAlphaBlendingOn({0.0f, 0.0f, 0.0f, 0.0f});
 
-        if (!m_Sprite.Render(m_Direct3D.GetDeviceContext()))
+        for (CSprite &sprite : m_sprites)
         {
-            return false;
-        }
+            if (!sprite.Render(m_Direct3D.GetDeviceContext()))
+            {
+                return false;
+            }
 
-        m_TextureShader.SetShaderMatrixBuffer(m_Direct3D.GetDeviceContext(), worldMatrix, viewMatrix, orthoMatrix);
-        m_TextureShader.SetShaderTexture(m_Direct3D.GetDeviceContext(), m_Sprite.GetTexture());
+            m_TextureShader.SetShaderTextureTranslationBuffer(m_Direct3D.GetDeviceContext(), sprite.GetTextureTranslation());
 
-        if (!m_TextureShader.Render(m_Direct3D.GetDeviceContext(), m_Sprite.GetIndexCount()))
-        {
-            return false;
+            m_TextureShader.SetShaderMatrixBuffer(m_Direct3D.GetDeviceContext(), worldMatrix, viewMatrix, orthoMatrix);
+
+            m_TextureShader.SetShaderTexture(m_Direct3D.GetDeviceContext(), sprite.GetTexture());
+
+            if (!m_TextureShader.Render(m_Direct3D.GetDeviceContext(), sprite.GetIndexCount()))
+            {
+                return false;
+            }
         }
 
         m_Direct3D.TurnZBufferOn();

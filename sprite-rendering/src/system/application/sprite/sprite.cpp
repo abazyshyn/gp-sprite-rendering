@@ -11,6 +11,7 @@ namespace GP
           m_currentTextureIndex(0),
           m_frameTime(0.0f),
           m_cycleTime(0.0f),
+          m_textureTranslation(0.0f),
           m_vertexCount(0),
           m_indexCount(0),
           m_screenWidth(0),
@@ -19,6 +20,8 @@ namespace GP
           m_bitmapHeight(0),
           m_renderX(0),
           m_renderY(0),
+          m_renderWidth(0),
+          m_renderHeight(0),
           m_prevPosX(0),
           m_prevPosY(0)
     {
@@ -81,6 +84,20 @@ namespace GP
             {
                 m_currentTextureIndex = 0;
             }
+        }
+    }
+
+    void CSprite::UpdateTextureTranslation(bool flagTrueIfShouldUpdate)
+    {
+        if (!flagTrueIfShouldUpdate)
+        {
+            return;
+        }
+
+        m_textureTranslation += 0.004f;
+        if (m_textureTranslation > 1.0f)
+        {
+            m_textureTranslation -= 1.0f;
         }
     }
 
@@ -207,7 +224,8 @@ namespace GP
 
     void CSprite::RenderBuffers(ID3D11DeviceContext *deviceContext)
     {
-        const uint32_t vertexBufferStride = static_cast<uint32_t>(sizeof(Vertex_s));
+
+        uint32_t vertexBufferStride = static_cast<uint32_t>(sizeof(Vertex_s));
         const uint32_t vertexBufferOffset = 0;
         const uint32_t indexBufferOffset = 0;
 
