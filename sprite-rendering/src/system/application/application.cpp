@@ -23,12 +23,12 @@ namespace GP
         m_Camera.SetRotation(0.0f, 0.0f, 0.0f);
 
         // TODO: figure out how to improve this.
-        if (!m_sprites[0].Init("sprite-back-temp.txt", m_Direct3D.GetDevice(), m_Direct3D.GetDeviceContext(), windowWidth, windowHeight, 0, 0, 800, 600))
+        if (!m_sprites[0].Init("sprite-back-temp.txt", m_Direct3D.GetDevice(), m_Direct3D.GetDeviceContext(), windowWidth, windowHeight, 0, 0, windowWidth, windowHeight))
         {
             MessageBox(hWnd, L"Could not initialize sprite", L"Error", MB_OK);
             return false;
         }
-        if (!m_sprites[1].Init("spite-platform-temp.txt", m_Direct3D.GetDevice(), m_Direct3D.GetDeviceContext(), windowWidth, windowHeight, 0, 10, 800, 600))
+        if (!m_sprites[1].Init("spite-platform-temp.txt", m_Direct3D.GetDevice(), m_Direct3D.GetDeviceContext(), windowWidth, windowHeight, 0, 10, windowWidth, windowHeight))
         {
             MessageBox(hWnd, L"Could not initialize sprite", L"Error", MB_OK);
             return false;
